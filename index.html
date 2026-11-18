@@ -1,418 +1,452 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Merry Christmas - 따뜻한 크리스마스 카드</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;1,600&family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
-  <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body {
-      width: 100%;
-      height: 100%;
-      overflow-x: hidden;
-      font-family: 'Noto Serif KR', serif;
-      background-color: #0b132b;
-      color: #fff8eb;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Merry Christmas - 따뜻한 크리스마스 카드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&family=Noto+Serif+KR:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-    /* 전체 배경 레이어 */
-    .bg-container {
-      position: fixed;
-      inset: 0;
-      z-index: 0;
-      background-color: #0e172a;
-      background-image: url('./background.png');
-      background-size: cover;
-      background-position: center center;
-      background-repeat: no-repeat;
-      transition: transform 12s ease-out;
-    }
-    .bg-container::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: radial-gradient(circle at 50% 45%, rgba(18, 12, 6, 0.25) 0%, rgba(8, 12, 24, 0.68) 100%);
-    }
+  body, html {
+    width: 100%;
+    min-height: 100vh;
+    font-family: 'Noto Serif KR', serif;
+    overflow-x: hidden;
+    background-color: #0b132b;
+    color: #fff9f0;
+  }
 
-    /* 은은한 빛줄기 (Light Rays) */
-    .light-rays {
-      position: fixed;
-      top: -20%;
-      left: 50%;
-      width: 160vw;
-      height: 140vh;
-      transform: translateX(-50%);
-      z-index: 1;
-      pointer-events: none;
-      background: conic-gradient(
-        from 165deg at 50% 0%,
-        transparent 0deg,
-        rgba(255, 224, 150, 0.08) 12deg,
-        transparent 24deg,
-        rgba(255, 210, 125, 0.11) 36deg,
-        transparent 48deg,
-        rgba(255, 230, 175, 0.07) 60deg,
-        transparent 75deg
-      );
-      filter: blur(18px);
-      animation: raySway 9s ease-in-out infinite alternate;
-    }
+  /* 전체 배경 이미지 */
+  .bg-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    background-image: url('background.png'), url('image_590a4931.jpg');
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    transition: background-image 0.5s ease-in-out;
+  }
 
-    @keyframes raySway {
-      0% { transform: translateX(-52%) rotate(-2deg); opacity: 0.7; }
-      100% { transform: translateX(-48%) rotate(2deg); opacity: 1; }
-    }
+  /* 배경을 선명하게 유지하면서 가독성만 살짝 돕는 아주 옅은 비네팅 */
+  .bg-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: radial-gradient(circle at center, rgba(10, 15, 30, 0.08) 0%, rgba(8, 12, 24, 0.35) 100%);
+    pointer-events: none;
+  }
 
-    /* 캔버스 애니메이션 (하트 & 반짝임) */
-    #particleCanvas {
-      position: fixed;
-      inset: 0;
-      z-index: 2;
-      pointer-events: none;
-    }
+  /* 은은한 빛줄기 애니메이션 */
+  .light-rays {
+    position: fixed;
+    top: -20%;
+    left: -20%;
+    width: 140%;
+    height: 140%;
+    z-index: 2;
+    background: conic-gradient(
+      from 45deg at 50% 0%,
+      transparent 0deg,
+      rgba(255, 223, 150, 0.09) 25deg,
+      transparent 55deg,
+      rgba(255, 210, 130, 0.07) 90deg,
+      transparent 130deg
+    );
+    animation: raySway 14s ease-in-out infinite alternate;
+    pointer-events: none;
+  }
 
-    /* 메인 카드 래퍼 */
-    .wrapper {
-      position: relative;
-      z-index: 3;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 28px 18px 90px;
-    }
+  @keyframes raySway {
+    0% { transform: rotate(-6deg) scale(1); opacity: 0.7; }
+    100% { transform: rotate(6deg) scale(1.05); opacity: 1; }
+  }
 
-    .card {
-      width: 100%;
-      max-width: 540px;
-      background: rgba(24, 16, 12, 0.56);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      border: 1px solid rgba(245, 208, 138, 0.45);
-      border-radius: 22px;
-      padding: 40px 30px;
-      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.55), inset 0 0 25px rgba(255, 214, 138, 0.12);
-      text-align: center;
-    }
+  /* 떠오르는 하트 및 반짝임 컨테이너 */
+  #particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 3;
+    pointer-events: none;
+    overflow: hidden;
+  }
 
-    .subtitle {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: 1.05rem;
-      letter-spacing: 0.28em;
-      color: #f5d08a;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
+  .floating-heart {
+    position: absolute;
+    bottom: -40px;
+    color: rgba(255, 215, 175, 0.75);
+    text-shadow: 0 0 10px rgba(255, 190, 130, 0.8);
+    animation: floatUp linear forwards;
+    user-select: none;
+  }
 
-    .title {
-      font-family: 'Cormorant Garamond', serif;
-      font-size: clamp(2.1rem, 6vw, 2.9rem);
-      font-weight: 600;
-      color: #fff5df;
-      text-shadow: 0 2px 14px rgba(245, 194, 107, 0.45);
-      margin-bottom: 22px;
-    }
-
-    .divider {
-      width: 72px;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #f5d08a, transparent);
-      margin: 0 auto 26px;
-    }
-
-    /* 위에서 아래로 내려오는 축하 편지 애니메이션 */
-    .letter-line {
+  @keyframes floatUp {
+    0% {
+      transform: translateY(0) translateX(0) scale(0.7);
       opacity: 0;
-      transform: translateY(-22px);
-      animation: dropIn 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      font-size: clamp(0.96rem, 2.8vw, 1.08rem);
-      line-height: 1.95;
-      color: #fdf6e9;
-      font-weight: 300;
-      margin-bottom: 14px;
-      word-break: keep-all;
     }
-
-    .letter-line.delay-1 { animation-delay: 0.3s; }
-    .letter-line.delay-2 { animation-delay: 0.9s; }
-    .letter-line.delay-3 { animation-delay: 1.5s; }
-    .letter-line.delay-4 { animation-delay: 2.1s; }
-    .letter-line.delay-5 { animation-delay: 2.7s; }
-
-    .signature {
-      margin-top: 24px;
-      font-size: 1rem;
-      color: #f5d08a;
-      font-weight: 400;
+    15% {
+      opacity: 0.85;
     }
-
-    @keyframes dropIn {
-      0% {
-        opacity: 0;
-        transform: translateY(-24px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    85% {
+      opacity: 0.75;
     }
-
-    /* 하단 컨트롤 바 (음악 켜기 + 배경 이미지 직접 선택 백업 버튼) */
-    .controls {
-      position: fixed;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      z-index: 10;
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-      width: max-content;
-      max-width: 94vw;
+    100% {
+      transform: translateY(-110vh) translateX(var(--drift)) scale(1.1);
+      opacity: 0;
     }
+  }
 
+  /* 메인 레이아웃 */
+  .main-wrapper {
+    position: relative;
+    z-index: 4;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 28px 18px 95px;
+  }
+
+  /* 투명도를 높인 고급스러운 유리 질감 편지지 */
+  .letter-card {
+    width: 100%;
+    max-width: 540px;
+    /* 투명도를 대폭 높여 배경 일러스트가 선명히 비치도록 설정 */
+    background: linear-gradient(
+      145deg,
+      rgba(22, 18, 15, 0.24) 0%,
+      rgba(35, 26, 20, 0.18) 100%
+    );
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1.5px solid rgba(245, 210, 145, 0.65);
+    border-radius: 22px;
+    padding: 40px 30px;
+    box-shadow:
+      0 15px 40px rgba(0, 0, 0, 0.35),
+      inset 0 0 24px rgba(255, 225, 165, 0.12);
+    text-align: center;
+    position: relative;
+  }
+
+  /* 내부 얇은 금빛 장식 테두리 */
+  .letter-card::before {
+    content: "";
+    position: absolute;
+    top: 9px;
+    left: 9px;
+    right: 9px;
+    bottom: 9px;
+    border: 1px solid rgba(245, 210, 145, 0.35);
+    border-radius: 15px;
+    pointer-events: none;
+  }
+
+  /* 위에서 아래로 내려오는 글씨 애니메이션 */
+  .drop-text {
+    opacity: 0;
+    transform: translateY(-28px);
+    animation: dropDown 1.1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    /* 투명해진 배경 위에서도 글씨가 또렷하게 읽히도록 깊이감 있는 그림자 적용 */
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.85), 0 0 20px rgba(15, 10, 5, 0.7);
+  }
+
+  @keyframes dropDown {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .delay-1 { animation-delay: 0.3s; }
+  .delay-2 { animation-delay: 0.8s; }
+  .delay-3 { animation-delay: 1.3s; }
+  .delay-4 { animation-delay: 1.8s; }
+  .delay-5 { animation-delay: 2.3s; }
+  .delay-6 { animation-delay: 2.8s; }
+
+  .subtitle {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.05rem;
+    letter-spacing: 0.25em;
+    color: #ffe2a8;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+
+  .title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff6e0;
+    letter-spacing: 0.04em;
+    margin-bottom: 18px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9), 0 0 22px rgba(255, 200, 110, 0.5);
+  }
+
+  .divider {
+    width: 70px;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, #f5d291, transparent);
+    margin: 0 auto 24px;
+  }
+
+  .message-line {
+    font-size: 1.05rem;
+    line-height: 1.95;
+    color: #ffffff;
+    font-weight: 400;
+    margin-bottom: 14px;
+    word-break: keep-all;
+  }
+
+  .signature {
+    margin-top: 26px;
+    font-size: 1.05rem;
+    color: #ffe5b4;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+
+  /* 하단 컨트롤 바 */
+  .controls {
+    position: fixed;
+    bottom: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 92%;
+    max-width: 460px;
+  }
+
+  .btn {
+    background: rgba(25, 20, 16, 0.55);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    color: #ffebc2;
+    border: 1px solid rgba(245, 210, 145, 0.65);
+    padding: 10px 18px;
+    border-radius: 30px;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .btn:hover {
+    background: rgba(245, 210, 145, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .btn.active {
+    background: rgba(245, 210, 145, 0.32);
+    border-color: #ffe5b4;
+    color: #ffffff;
+  }
+
+  #bg-upload {
+    display: none;
+  }
+
+  @media (max-width: 480px) {
+    .letter-card {
+      padding: 32px 20px;
+    }
+    .title {
+      font-size: 2.05rem;
+    }
+    .message-line {
+      font-size: 0.96rem;
+      line-height: 1.85;
+    }
     .btn {
-      appearance: none;
-      border: 1px solid rgba(245, 208, 138, 0.6);
-      background: rgba(24, 16, 12, 0.78);
-      backdrop-filter: blur(8px);
-      color: #ffefc8;
-      padding: 10px 18px;
-      border-radius: 999px;
-      font-family: 'Noto Serif KR', serif;
-      font-size: 0.88rem;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-      transition: all 0.25s ease;
+      padding: 9px 14px;
+      font-size: 0.84rem;
     }
-
-    .btn:hover {
-      background: rgba(245, 208, 138, 0.22);
-      transform: translateY(-2px);
-    }
-
-    .btn.playing {
-      background: linear-gradient(135deg, rgba(212, 163, 89, 0.45), rgba(145, 92, 42, 0.55));
-      border-color: #ffe29f;
-      box-shadow: 0 0 18px rgba(245, 208, 138, 0.45);
-    }
-
-    #bgUpload { display: none; }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 32px 20px;
-        border-radius: 18px;
-      }
-      .btn {
-        padding: 9px 14px;
-        font-size: 0.82rem;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
+
   <div class="bg-container" id="bgContainer"></div>
+  <div class="bg-overlay"></div>
   <div class="light-rays"></div>
-  <canvas id="particleCanvas"></canvas>
+  <div id="particles-container"></div>
 
-  <main class="wrapper">
-    <section class="card">
-      <div class="subtitle">Season's Greetings</div>
-      <h1 class="title">Merry Christmas</h1>
-      <div class="divider"></div>
+  <main class="main-wrapper">
+    <article class="letter-card">
+      <p class="subtitle drop-text delay-1">Warmest Wishes</p>
+      <h1 class="title drop-text delay-2">Merry Christmas</h1>
+      <div class="divider drop-text delay-2"></div>
 
-      <p class="letter-line delay-1">하얀 눈이 소복이 내려앉은 고요한 겨울밤,</p>
-      <p class="letter-line delay-2">창가마다 켜진 따뜻한 불빛처럼<br>당신의 하루에도 포근한 온기가 가득하길 바랍니다.</p>
-      <p class="letter-line delay-3">올 한 해 수고 많았던 당신에게<br>사랑과 평안이 깃든 크리스마스가 선물처럼 찾아오기를,</p>
-      <p class="letter-line delay-4">다가오는 새해에도 웃음꽃 피는 행복한 날들만<br>가득하시기를 진심으로 기원합니다.</p>
-      <p class="letter-line delay-5 signature">따뜻한 마음을 담아, 메리 크리스마스 ✨</p>
-    </section>
+      <p class="message-line drop-text delay-3">
+        하얀 눈이 소복이 내려앉은 고요한 겨울밤,<br>
+        창가마다 따뜻한 불빛이 피어오릅니다.
+      </p>
+      <p class="message-line drop-text delay-4">
+        올 한 해 수고한 당신의 모든 날들에<br>
+        깊은 감사와 따뜻한 온기를 전합니다.
+      </p>
+      <p class="message-line drop-text delay-5">
+        사랑하는 사람들과 함께 웃음 가득한<br>
+        행복하고 포근한 크리스마스 보내세요.
+      </p>
+
+      <p class="signature drop-text delay-6">사랑과 감사를 담아 드림</p>
+    </article>
   </main>
 
   <div class="controls">
-    <button type="button" class="btn" id="musicBtn" onclick="toggleMusic()">
-      <span id="musicIcon">🎵</span>
-      <span id="musicText">음악 켜기</span>
-    </button>
-    <label for="bgUpload" class="btn" title="배경 이미지가 보이지 않을 때 저장한 이미지를 직접 선택할 수 있습니다">
-      <span>🖼️</span>
-      <span>배경 사진 불러오기</span>
-    </label>
-    <input type="file" id="bgUpload" accept="image/*" />
+    <button type="button" class="btn" id="musicBtn">🎵 음악 켜기</button>
+    <label for="bg-upload" class="btn">🖼️ 배경 사진 불러오기</label>
+    <input type="file" id="bg-upload" accept="image/*">
   </div>
 
-  <script>
-    // 1. 배경 이미지 자동 탐색 및 수동 불러오기 지원
-    const bgContainer = document.getElementById('bgContainer');
-    const candidateImages = ['./background.png', './image_590a4931.jpg', './background.jpg', './christmas.png'];
+<script>
+  // 1. 배경 사진 직접 불러오기 기능
+  const bgUpload = document.getElementById('bg-upload');
+  const bgContainer = document.getElementById('bgContainer');
 
-    (function tryLoadBackground(index) {
-      if (index >= candidateImages.length) return;
-      const img = new Image();
-      img.onload = () => {
-        bgContainer.style.backgroundImage = `url('${candidateImages[index]}')`;
-      };
-      img.onerror = () => {
-        tryLoadBackground(index + 1);
-      };
-      img.src = candidateImages[index];
-    })(0);
+  bgUpload.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      bgContainer.style.backgroundImage = `url('${event.target.result}')`;
+    };
+    reader.readAsDataURL(file);
+  });
 
-    document.getElementById('bgUpload').addEventListener('change', function (e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function (evt) {
-        bgContainer.style.backgroundImage = `url('${evt.target.result}')`;
-      };
-      reader.readAsDataURL(file);
-    });
+  // 2. 은은한 하트 & 빛 입자 애니메이션
+  const particlesContainer = document.getElementById('particles-container');
+  const symbols = ['♥', '♡', '✦', '♥'];
 
-    // 2. 은은한 하트 & 따뜻한 빛 입자 애니메이션
-    const canvas = document.getElementById('particleCanvas');
-    const ctx = canvas.getContext('2d');
-    let width, height, particles = [];
+  function createParticle() {
+    const el = document.createElement('span');
+    el.className = 'floating-heart';
+    el.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    function resize() {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
+    const left = Math.random() * 100;
+    const size = 12 + Math.random() * 14;
+    const duration = 8 + Math.random() * 7;
+    const drift = (Math.random() - 0.5) * 80 + 'px';
+
+    el.style.left = left + 'vw';
+    el.style.fontSize = size + 'px';
+    el.style.animationDuration = duration + 's';
+    el.style.setProperty('--drift', drift);
+
+    particlesContainer.appendChild(el);
+
+    setTimeout(() => {
+      el.remove();
+    }, duration * 1000);
+  }
+
+  setInterval(createParticle, 750);
+  for (let i = 0; i < 8; i++) {
+    setTimeout(createParticle, i * 350);
+  }
+
+  // 3. 잔잔한 오르골 크리스마스 멜로디 (We Wish You a Merry Christmas + Silent Night)
+  let audioCtx = null;
+  let isPlaying = false;
+  let melodyTimer = null;
+  const musicBtn = document.getElementById('musicBtn');
+
+  const notes = {
+    C4: 261.63, D4: 293.66, E4: 329.63, F4: 349.23,
+    G4: 392.00, A4: 440.00, B4: 493.88,
+    C5: 523.25, D5: 587.33, E5: 659.25
+  };
+
+  const melody = [
+    ['G4', 0.45], ['C5', 0.45], ['C5', 0.25], ['D5', 0.25], ['C5', 0.25], ['B4', 0.25],
+    ['A4', 0.45], ['A4', 0.45], ['A4', 0.45],
+    ['D5', 0.45], ['D5', 0.25], ['E5', 0.25], ['D5', 0.25], ['C5', 0.25],
+    ['B4', 0.45], ['G4', 0.45], ['G4', 0.45],
+    ['E5', 0.45], ['E5', 0.25], ['F4', 0.01], ['E5', 0.25], ['D5', 0.25], ['C5', 0.25],
+    ['A4', 0.45], ['G4', 0.25], ['G4', 0.25],
+    ['A4', 0.45], ['D5', 0.45], ['B4', 0.45], ['C5', 0.9]
+  ];
+
+  function playNote(freq, duration) {
+    if (!audioCtx || freq < 100) return;
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, now);
+
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(0.08, now + 0.04);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 1.4);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start(now);
+    osc.stop(now + duration * 1.45);
+  }
+
+  let step = 0;
+  function playLoop() {
+    if (!isPlaying) return;
+    const [noteName, dur] = melody[step];
+    playNote(notes[noteName], dur);
+    step = (step + 1) % melody.length;
+    const pause = step === 0 ? 1200 : dur * 1000;
+    melodyTimer = setTimeout(playLoop, pause);
+  }
+
+  musicBtn.addEventListener('click', () => {
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    window.addEventListener('resize', resize);
-    resize();
-
-    class Particle {
-      constructor() {
-        this.reset(true);
-      }
-      reset(initial = false) {
-        this.x = Math.random() * width;
-        this.y = initial ? Math.random() * height : height + 20;
-        this.size = Math.random() * 6 + 4;
-        this.speedY = Math.random() * 0.6 + 0.25;
-        this.speedX = (Math.random() - 0.5) * 0.4;
-        this.alpha = Math.random() * 0.45 + 0.2;
-        this.isHeart = Math.random() < 0.45;
-        this.wobble = Math.random() * Math.PI * 2;
-        this.color = Math.random() < 0.5 ? '255, 214, 153' : '255, 182, 193';
-      }
-      update() {
-        this.wobble += 0.02;
-        this.y -= this.speedY;
-        this.x += this.speedX + Math.sin(this.wobble) * 0.25;
-        if (this.y < -30) this.reset(false);
-      }
-      draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.fillStyle = `rgba(${this.color}, ${this.alpha})`;
-        ctx.shadowColor = `rgba(${this.color}, 0.6)`;
-        ctx.shadowBlur = 8;
-
-        if (this.isHeart) {
-          const s = this.size * 0.55;
-          ctx.beginPath();
-          ctx.moveTo(0, s * 0.4);
-          ctx.bezierCurveTo(-s, -s * 0.5, -s * 2, s * 0.6, 0, s * 2);
-          ctx.bezierCurveTo(s * 2, s * 0.6, s, -s * 0.5, 0, s * 0.4);
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          ctx.arc(0, 0, this.size * 0.35, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-    }
-
-    for (let i = 0; i < 42; i++) {
-      particles.push(new Particle());
-    }
-
-    function animate() {
-      ctx.clearRect(0, 0, width, height);
-      for (const p of particles) {
-        p.update();
-        p.draw();
-      }
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    // 3. Web Audio API 잔잔한 크리스마스 오르골 멜로디 (Silent Night)
-    let audioCtx = null;
-    let isPlaying = false;
-    let melodyTimer = null;
-
-    const melody = [
-      { f: 392.00, d: 0.75 }, { f: 440.00, d: 0.25 }, { f: 392.00, d: 0.5 }, { f: 329.63, d: 1.5 },
-      { f: 392.00, d: 0.75 }, { f: 440.00, d: 0.25 }, { f: 392.00, d: 0.5 }, { f: 329.63, d: 1.5 },
-      { f: 587.33, d: 1.0 },  { f: 587.33, d: 0.5 },  { f: 493.88, d: 1.5 },
-      { f: 523.25, d: 1.0 },  { f: 523.25, d: 0.5 },  { f: 392.00, d: 1.5 },
-      { f: 440.00, d: 1.0 },  { f: 440.00, d: 0.5 },  { f: 523.25, d: 0.75 }, { f: 493.88, d: 0.25 }, { f: 440.00, d: 0.5 },
-      { f: 392.00, d: 0.75 }, { f: 440.00, d: 0.25 }, { f: 392.00, d: 0.5 },  { f: 329.63, d: 1.5 }
-    ];
-
-    function playNote(freq, duration) {
-      if (!audioCtx || !isPlaying) return;
-      const now = audioCtx.currentTime;
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(freq, now);
-
-      gain.gain.setValueAtTime(0.0001, now);
-      gain.gain.exponentialRampToValueAtTime(0.08, now + 0.04);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration * 1.15);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-
-      osc.start(now);
-      osc.stop(now + duration * 1.2);
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
     }
 
-    function startMelody(idx = 0) {
-      if (!isPlaying) return;
-      const note = melody[idx % melody.length];
-      playNote(note.f, note.d);
-      melodyTimer = setTimeout(() => startMelody(idx + 1), note.d * 620);
+    if (!isPlaying) {
+      isPlaying = true;
+      musicBtn.textContent = '⏸️ 음악 끄기';
+      musicBtn.classList.add('active');
+      playLoop();
+    } else {
+      isPlaying = false;
+      clearTimeout(melodyTimer);
+      musicBtn.textContent = '🎵 음악 켜기';
+      musicBtn.classList.remove('active');
     }
-
-    function toggleMusic() {
-      const btn = document.getElementById('musicBtn');
-      const icon = document.getElementById('musicIcon');
-      const text = document.getElementById('musicText');
-
-      if (!isPlaying) {
-        if (!audioCtx) {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        }
-        if (audioCtx.state === 'suspended') {
-          audioCtx.resume();
-        }
-        isPlaying = true;
-        btn.classList.add('playing');
-        icon.textContent = '🎶';
-        text.textContent = '음악 끄기';
-        startMelody(0);
-      } else {
-        isPlaying = false;
-        clearTimeout(melodyTimer);
-        btn.classList.remove('playing');
-        icon.textContent = '🎵';
-        text.textContent = '음악 켜기';
-      }
-    }
-  </script>
+  });
+</script>
 </body>
 </html>
